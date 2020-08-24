@@ -38,9 +38,13 @@ public class MovieService {
         }).orElseThrow(() -> new UserNotFoundException("User with id " + userId + " not found"));
         return (Movie) movieRepository.save(movie);
     }
-    public void delete(Long userId, Long movieId) throws Throwable {
-        movieRepository.findByIdAndUserId(movieId, userId).
-        orElseThrow(() -> new MovieNotFoundException("Movie with id " + movieId + " not found for user with id"+userId));
+    public void delete(Long userId, Long movieId) throws MovieNotFoundException {
+        Optional<Movie> optionalMovie = movieRepository.findByIdAndUserId(movieId, userId);
+        if(optionalMovie.isPresent()){
+            movieRepository.delete(optionalMovie.get());
+        }else{
+            throw  new MovieNotFoundException("Movie with id " + movieId + " not found for user with id"+userId);
+        }
     }
 
 
